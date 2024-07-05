@@ -2,7 +2,8 @@ import * as jwt from "jsonwebtoken";
 import jwksClient from "jwks-rsa";
 import express from 'express';
 import { getuserByKinde } from '../controllers/auth';
-import { createUser, getUserByKindeId } from "../db";
+import { createUser, getUserByEmail, getUserByKindeId } from "../db";
+import { updateUser } from '../db/index';
 
 const client = jwksClient({
   jwksUri: "https://kibotech.kinde.com/.well-known/jwks.json" as string // Ensure the environment variable is defined as a string
@@ -33,18 +34,16 @@ const authenticateJWT = async(req: express.Request, res: express.Response, next:
         return res.sendStatus(403);
       }
 
-      const kinde_id= (user.sub) as string;
-
-      
-
-      const getuser= await getUserByKindeId(kinde_id)
-      if(getuser.length == 0){
+      const email= (user?.email) as string;
+      const getuser= await getUserByEmail(email)
+      if(getuser.length <= 0){
         try{
-        const newuser = await createUser({ username:user?.email.split("@")[0], kinde_id, email:user?.email, })
-        
+        const newuser=await createUser({ username:user?.email.split("@")[0], kinde_id:user.sub ?? "", email:user?.email, })
         }catch(e){
 
         }
+      }else{
+        const updateduser = await updateUser({kinde_id:user.sub, username:user?.email.split("@")[0], email:user?.email}, getuser[0].id)
       }
 
 

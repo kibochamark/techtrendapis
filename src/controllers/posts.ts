@@ -122,13 +122,17 @@ export const getBlogByUser = async (req: express.Request, res: express.Response)
         const id = req.query.kinde_id as string;
 
         if (!id) {
-            return res.status(400).end()
+            return res.status(400).end({
+                message:"missing kinde id"
+            })
         }
 
         const user = await getUserByKindeId(id)
+        console.log(user, "user")
         if (user) {
 
             const blogs = await getBlogsBelongingToKindeId(user[0].id)
+            console.log(blogs, "blogs")
             if (!blogs) {
                 return res.status(404).json({
                     message: "blogs not available"
