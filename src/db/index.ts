@@ -60,8 +60,11 @@ export const createBlog = async (post: NewPost) => {
 
 
 
-export const getBlogsWithComments = async () => {
+export const getBlogsWithComments = async (page:number=1, pageSize:number=6) => {
     return await db.query.posts.findMany({
+        orderBy:(posts,{desc})=> posts.updated_at,
+        limit:pageSize,
+        offset:(page-1) * pageSize,
         columns: {
             id: true,
             title: true,
