@@ -84,7 +84,7 @@ export const getBlogs = async (req: express.Request, res: express.Response) => {
         const page = req.query.page as string
         const pageSize = req.query.pageSize as string
         const pagenumber= page ? parseInt(page) : 1  
-        const pagesizenumber= page ? parseInt(pageSize) : 1  
+        const pagesizenumber= page ? parseInt(pageSize) : 6  
         const blogs = await getBlogsWithComments(pagenumber, pagesizenumber)
         if (!blogs) {
             return res.status(404).json({
